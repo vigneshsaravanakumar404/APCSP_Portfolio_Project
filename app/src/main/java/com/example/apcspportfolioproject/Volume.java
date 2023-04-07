@@ -1,9 +1,6 @@
 package com.example.apcspportfolioproject;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,14 +12,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.Objects;
 
 public class Volume extends AppCompatActivity {
 
-    // Variables
+    // Variables Used in this program
     Spinner VolumeUnitsSpinner;
     EditText input;
-    final String[] VolumeUnits = {"Cubic Centimeter", "Cubic Millimeter","Cubic Inch", "Liter", "Milliliter", "Gallon","Fluid Ounce", "Tablespoon"};
+    final String[] VolumeUnits = {"Cubic Centimeter", "Cubic Millimeter","Cubic Inch", "Liter", "Milliliter", "Gallon","Fluid Ounce", "Tablespoon"}; // List Collection Type
     Button convert;
     TextView textView2, textView3, textView4, textView5, textView6, textView7, textView8, textView9, textView10;
 
@@ -32,11 +31,11 @@ public class Volume extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_volume);
 
+        // Removing the action bar and making the app fullscreen
+        getSupportActionBar().hide();
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
 
-        // Set the Title
-        Objects.requireNonNull(getSupportActionBar()).setTitle("Chemistry Helper");
-
-        // Variables
+        // Initializing the variables used in this app
         VolumeUnitsSpinner = findViewById(R.id.VolumeUnitsSpinner);
         input = findViewById(R.id.input);
         convert = findViewById(R.id.convert);
@@ -56,12 +55,18 @@ public class Volume extends AppCompatActivity {
         textView7.setText("Gallon");
         textView8.setText("Fluid Ounce");
         textView9.setText("Tablespoon");
-        final TextView[] textViews = {textView2, textView3, textView4, textView5, textView6, textView7, textView8, textView9};
+        final TextView[] textViews = {textView2, textView3, textView4, textView5, textView6, textView7, textView8, textView9}; // List Collection Type
 
-
-
-
-        // Spinner
+        /*
+            The following is the code for the spinner. The spinner is populated with the available units to convert to.
+            The user can choose from any of the units in the spinner. The spinner is set to the first item in the lThat by
+            default when the app is opened to avoid a null pointer exception. A toast is also displayed to the user when
+            the user choose something to confirm the selection has been received.
+         */
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, VolumeUnits);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        VolumeUnitsSpinner.setAdapter(adapter);
+        VolumeUnitsSpinner.setPrompt("Select a unit");
         VolumeUnitsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -73,13 +78,21 @@ public class Volume extends AppCompatActivity {
             }
         });
 
-        // Populate the spinner
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, VolumeUnits);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        VolumeUnitsSpinner.setAdapter(adapter);
+        /*
+            The following is where the user can enter a number to be converted. This along with the selection in the spinner
+            will be used to convert the number to all units. A toast is displayed when the user clicks enter on the EditText
+            stating that the user should click the convert button instead.
+         */
+        input.setOnEditorActionListener((v, actionId, event) -> {
+            Toast.makeText(Volume.this, "Please click the convert button", Toast.LENGTH_SHORT).show();
+            return false;
+        });
 
-
-        // Convert Button
+        /*
+            The following is the main user action that triggers events in the app.
+            The button takes in the user's number input in the EditText and the current selection in the spinner
+            and converts the number to all units.
+         */
         convert.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -88,22 +101,32 @@ public class Volume extends AppCompatActivity {
                     Toast.makeText(Volume.this, "Please enter a number", Toast.LENGTH_SHORT).show();
                 }
                 else {
+
+                    /*
+                        First the current selection in the spinner is taken and the user's input is taken and stored in a variable.
+                        Then the convertToAllUnits method is called and the results are stored in an array.
+                     */
                     String currentSelection = VolumeUnitsSpinner.getSelectedItem().toString();
                     double inputNumber = Double.parseDouble(input.getText().toString());
+                    double[] convertedValues = convertToAllUnits(currentSelection, inputNumber); // List Collection Type and a call to a student created procedure
 
-                    double[] convertedValues = convertToAllUnits(currentSelection,inputNumber);
-                    for (int i = 0; i < textViews.length; i++) {
-                        Log.d("TAG", "onClick: " + convertedValues[i]);
-                        textViews[i].setText(textViews[i].getText() + ": " + convertedValues[i]);
+                    // Display the results in the TextViews
+                    for (int i = 0; i < textViews.length; i++) { // An integrative algorithm is used to display the results
+                        textViews[i].setText(textViews[i].getText().toString().split(": ")[0] + ": " +convertedValues[i]); // Instructions for output
                     }
-
                 }
-
             }
         });
+
+
     }
 
-    // Methods
+    /*
+        The following methods convert milliliters to all units. The method takes in a double and returns a double.
+        These methods are called in the convertToAllUnits method. All are examples of a student created procedure that
+        contributes towards the intended purpose of the app. They all include one or more parameters with their data types
+        indicated.
+     */
     public double convertMillilitersToMilliliters(double milliliters) {
         return milliliters;
     }
@@ -129,6 +152,8 @@ public class Volume extends AppCompatActivity {
         return milliliters / 14.78676478125;
     }
     public double convertToMilliliters(String units, double number) {
+
+        // if-statement that depends on the value of the parameter
         if (units.equals("Cubic Centimeter")) {
             return number * 10;
         }
@@ -157,9 +182,19 @@ public class Volume extends AppCompatActivity {
             return 0;
         }
     }
+
+    /*
+        The following method takes in the user's input and the current selection in the spinner. Then the user's input is
+        first converted into milliliters. Then the milliliters are converted into all other units using several methods all coded above.
+        The results are rounded to 2 decimal places and stored in an array. The array is then returned.
+     */
     public double[] convertToAllUnits(String units, double number) {
-        double[] convertedValues = new double[9];
+        double[] convertedValues = new double[9]; // List Collection Type
+
+        // First convert to milliliters
         double milliliters = convertToMilliliters(units, number);
+
+        // Then convert to all other units
         convertedValues[0] = convertMillilitersToCubicCentimeters(milliliters);
         convertedValues[1] = convertMillilitersToCubicMillimeters(milliliters);
         convertedValues[2] = convertMillilitersToCubicInches(milliliters);
@@ -168,8 +203,13 @@ public class Volume extends AppCompatActivity {
         convertedValues[5] = convertMillilitersToGallons(milliliters);
         convertedValues[6] = convertMillilitersToFluidOunces(milliliters);
         convertedValues[7] = convertMillilitersToTablespoons(milliliters);
+
+        // Round to 3 decimal places
+        for (int i = 0; i < convertedValues.length; i++) {
+            convertedValues[i] = Math.round(convertedValues[i] * 1000.0) / 1000.0;
+        }
+
+        // Return array
         return convertedValues;
     }
-
-
 }
