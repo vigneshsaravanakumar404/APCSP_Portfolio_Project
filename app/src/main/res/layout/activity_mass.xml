@@ -82,7 +82,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="TextView" />
+            android:text="TextView"
+            tools:ignore="HardcodedText" />
 
         <TextView
             android:id="@+id/textView8"
@@ -98,9 +99,16 @@
             android:layout_weight="1"
             android:text="TextView" />
         <Button
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:text="Button" />
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:text="Switch to Mass"
+            android:id="@+id/switchToMass"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="#FF0000"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <Button

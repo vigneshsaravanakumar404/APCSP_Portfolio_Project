@@ -18,6 +18,9 @@ import java.util.Objects;
 
 public class Volume extends AppCompatActivity {
 
+
+    // !Under Construction TODO redesign cover page!
+
     // Variables Used in this program
     Spinner VolumeUnitsSpinner;
     EditText input;
@@ -108,11 +111,12 @@ public class Volume extends AppCompatActivity {
                      */
                     String currentSelection = VolumeUnitsSpinner.getSelectedItem().toString();
                     double inputNumber = Double.parseDouble(input.getText().toString());
-                    double[] convertedValues = convertToAllUnits(currentSelection, inputNumber); // List Collection Type and a call to a student created procedure
+
+                    String[] convertedValues = convertToAllUnits(currentSelection, inputNumber, textViews); // ! 3b.i and 3c.ii List Collection Type and a call to a student created procedure
 
                     // Display the results in the TextViews
                     for (int i = 0; i < textViews.length; i++) { // An integrative algorithm is used to display the results
-                        textViews[i].setText(textViews[i].getText().toString().split(": ")[0] + ": " +convertedValues[i]); // Instructions for output
+                        textViews[i].setText(convertedValues[i]); // Instructions for output
                     }
                 }
             }
@@ -151,65 +155,50 @@ public class Volume extends AppCompatActivity {
     public double convertMillilitersToTablespoons(double milliliters) {
         return milliliters / 14.78676478125;
     }
-    public double convertToMilliliters(String units, double number) {
-
-        // if-statement that depends on the value of the parameter
-        if (units.equals("Cubic Centimeter")) {
-            return number * 10;
-        }
-        else if (units.equals("Cubic Millimeter")) {
-            return number / 1000.0;
-        }
-        else if (units.equals("Cubic Inch")) {
-            return number * 16.387064;
-        }
-        else if (units.equals("Liter")) {
-            return number * 1000;
-        }
-        else if (units.equals("Milliliter")) {
-            return number;
-        }
-        else if (units.equals("Gallon")) {
-            return number * 3785.412;
-        }
-        else if (units.equals("Fluid Ounce")) {
-            return number * 29.5735295625;
-        }
-        else if (units.equals("Tablespoon")) {
-            return number * 14.78676478125;
-        }
-        else {
-            return 0;
-        }
-    }
 
     /*
         The following method takes in the user's input and the current selection in the spinner. Then the user's input is
         first converted into milliliters. Then the milliliters are converted into all other units using several methods all coded above.
-        The results are rounded to 2 decimal places and stored in an array. The array is then returned.
+         The array is then returned.
      */
-    public double[] convertToAllUnits(String units, double number) {
-        double[] convertedValues = new double[9]; // List Collection Type
+    public String[] convertToAllUnits(String units, double number, TextView[] textViews) { // !3c.i code shows procedure with parameters
+        // Variables
+        String[] convertedValues = new String[8]; // List Collection Type
+        double milliliters;
 
-        // First convert to milliliters
-        double milliliters = convertToMilliliters(units, number);
+        // ! If-Statement to convert to common Unit of measure
+        if (units.equals("Cubic Centimeter")) { milliliters = number * 10; }
+        else if (units.equals("Cubic Millimeter")) { milliliters = number / 1000; }
+        else if (units.equals("Cubic Inch")) { milliliters = number * 16.387064; }
+        else if (units.equals("Liter")) { milliliters = number * 1000; }
+        else if (units.equals("Milliliter")) { milliliters = number; }
+        else if (units.equals("Gallon")) { milliliters = number * 3785.412; }
+        else if (units.equals("Fluid Ounce")) { milliliters = number * 29.5735295625; }
+        else if (units.equals("Tablespoon")) { milliliters = number * 14.78676478125; }
+        else { milliliters = 0; }
 
         // Then convert to all other units
-        convertedValues[0] = convertMillilitersToCubicCentimeters(milliliters);
-        convertedValues[1] = convertMillilitersToCubicMillimeters(milliliters);
-        convertedValues[2] = convertMillilitersToCubicInches(milliliters);
-        convertedValues[3] = convertMillilitersToLiters(milliliters);
-        convertedValues[4] = convertMillilitersToMilliliters(milliliters);
-        convertedValues[5] = convertMillilitersToGallons(milliliters);
-        convertedValues[6] = convertMillilitersToFluidOunces(milliliters);
-        convertedValues[7] = convertMillilitersToTablespoons(milliliters);
+        convertedValues[0] = String.valueOf(convertMillilitersToCubicCentimeters(milliliters));
+        convertedValues[1] = String.valueOf(convertMillilitersToCubicMillimeters(milliliters));
+        convertedValues[2] = String.valueOf(convertMillilitersToCubicInches(milliliters));
+        convertedValues[3] = String.valueOf(convertMillilitersToLiters(milliliters));
+        convertedValues[4] = String.valueOf(convertMillilitersToMilliliters(milliliters));
+        convertedValues[5] = String.valueOf(convertMillilitersToGallons(milliliters));
+        convertedValues[6] = String.valueOf(convertMillilitersToFluidOunces(milliliters));
+        convertedValues[7] = String.valueOf(convertMillilitersToTablespoons(milliliters));
 
-        // Round to 3 decimal places
+        /* Add units to the end of each value by looping through the array and adding the units to the end of each
+           value based on the text in the TextViews. If there is a ":" that means the textViews have been previously updated. So we grab the unit part
+           of the text in the textView and ignore the rest. If that isn't the case then we just grab the text in the textView and add it to the end  */
         for (int i = 0; i < convertedValues.length; i++) {
-            convertedValues[i] = Math.round(convertedValues[i] * 1000.0) / 1000.0;
+            if (textViews[i].getText().toString().contains(":")) {
+                convertedValues[i] += " " + textViews[i].getText().toString().split(": ")[1];
+            }
+            else{
+                convertedValues[i] += " :" + textViews[i].getText().toString();
+            }
         }
-
-        // Return array
         return convertedValues;
     }
 }
+
