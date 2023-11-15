@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Volume extends AppCompatActivity {
@@ -192,12 +193,16 @@ public class Volume extends AppCompatActivity {
            of the text in the textView and ignore the rest. If that isn't the case then we just grab the text in the textView and add it to the end  */
         for (int i = 0; i < convertedValues.length; i++) {
             if (textViews[i].getText().toString().contains(":")) {
-                convertedValues[i] += " " + textViews[i].getText().toString().split(": ")[1];
+
+                convertedValues[i] += " :" + textViews[i].getText().toString().split(":")[1];
             }
             else{
                 convertedValues[i] += " :" + textViews[i].getText().toString();
             }
         }
+
+        // print the array to Log.d in one line
+        Log.d("Converted Values", Arrays.toString(convertedValues));
         return convertedValues;
     }
 }
